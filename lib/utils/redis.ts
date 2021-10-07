@@ -12,5 +12,5 @@ export const singleton = <T>(id: string, fn: () => T) => {
 }
 
 export const redis = singleton('redis', () => {
-  return new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
+  return new Redis(process.env.REDIS_URL || 'redis://127.0.0.1:6379')
 })

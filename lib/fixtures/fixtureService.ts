@@ -1,6 +1,7 @@
 import { prisma } from '../utils/prisma'
 import faker from 'faker'
 import { Role } from '.prisma/client'
+import { redis } from '../utils/redis'
 
 class FixtureService {
 
@@ -55,6 +56,7 @@ class FixtureService {
         await prisma.account.deleteMany({})
         await prisma.session.deleteMany({})
         await prisma.user.deleteMany({})
+        await redis.flushall()
     }
 }
 
