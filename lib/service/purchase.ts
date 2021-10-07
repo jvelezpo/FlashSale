@@ -56,7 +56,10 @@ class Purchase {
   
     const item = await getActiveItem(itemId)
     if (!item) {
-      return console.log('no item found')
+      return console.log('No item found')
+    }
+    if (item.quantity <= 0) {
+      return console.log('We ran out of inventory in this item, please check more products from our amazing store')
     }
   
     const userUsdBalance = await getUserBalance(userId, internals.currency)
@@ -73,13 +76,18 @@ class Purchase {
         },
       })
       // 2. Decrement the item quantity
-      await updateFlashItem(itemId, {
+      const updatedItem = await updateFlashItem(itemId, {
         quantity: {
           decrement: Number(quantity),
         },
       })
       // 3. Create a record of the purchase
       await createPurchase(userId, itemId, item.price, Number(quantity))
+
+      // 4. Remove the item if the quantity reached 0, making this item un available to future purchases
+      if (updatedItem.quantity === 0) {
+        await redis.del(`item:${updatedItem.id}`)    
+      }
   
     } catch (err) {
       console.log('ERROR:', err)
