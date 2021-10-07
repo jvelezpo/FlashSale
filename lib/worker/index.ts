@@ -1,6 +1,6 @@
-import Purchase from './service/purchase'
-import Inventory from './utils/inventory'
-import { taskSubscriber } from './utils/taskSubscriber'
+import Purchase from '../service/purchase'
+import Inventory from './inventory'
+import { taskSubscriber } from '../utils/taskSubscriber'
 
 const purchase = new Purchase()
 

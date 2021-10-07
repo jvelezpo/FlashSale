@@ -9,11 +9,10 @@
     "lint": "next lint",
     "worker": "dotenv -c -- node .next/server/worker.js",
     "dev:worker": "wait-on .next/server/worker.js && dotenv -c -- nodemon .next/server/worker.js -w src/server -w src/shared",
-    "all": "npm-run-all -p dev dev:worker",
     "fixtures:up": "NODE_ENV=dev node .next/server/fixtures.js -u -c 100",
     "fixtures:down": "NODE_ENV=dev node .next/server/fixtures.js",
-    "mocha": "mocha --exit ./test/firstIntegration",
-    "e2e": "start-server-and-test dev http://localhost:3000 mocha"
+    "mocha": "mocha --exit './test/**/*.{mjs,ts}'",
+    "e2e": "start-server-and-test dev http://localhost:3000 worker"
   },
   "dependencies": {
     "@chakra-ui/icons": "^1.0.15",
@@ -33,6 +32,7 @@
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "sass": "^1.38.2"
+    
   },
   "devDependencies": {
     "@types/amqplib": "^0.8.2",
@@ -44,16 +44,15 @@
     "@types/mocha": "^9.0.0",
     "@types/react": "17.0.19",
     "chai": "^4.3.4",
+    "sinon": "^11.1.2",
     "chai-http": "^4.3.0",
     "eslint": "7.32.0",
     "eslint-config-next": "11.1.0",
     "mocha": "^9.1.2",
     "nodemon": "^2.0.13",
-    "npm-run-all": "^4.1.5",
     "start-server-and-test": "^1.14.0",
     "ts-node": "^10.2.1",
     "tsconfig-paths": "^3.11.0",
-    "typescript": "4.4.2",
-    "wait-on": "^3.3.0"
+    "typescript": "4.4.2"
   }
 }

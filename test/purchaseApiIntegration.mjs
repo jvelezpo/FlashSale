@@ -2,13 +2,16 @@
 import chai from 'chai'
 import chaiHttp from 'chai-http'
 import Redis from 'ioredis'
+import util from 'util'
 import pkg from '@prisma/client';
+
 const { PrismaClient } = pkg;
 
 chai.use(chaiHttp);
 
 chai.should();
 const expect = chai.expect;
+const sleep = util.promisify(setTimeout);
 
 const redis = new Redis(process.env.REDIS_URL || 'redis://127.0.0.1:6379')
 const prisma = new PrismaClient()
@@ -51,9 +54,12 @@ describe('Purchase items', () => {
   })
 
   after(async () => {
+    await redis.flushall()
+    await prisma.purchases.deleteMany({})
     await prisma.flashSaleItems.deleteMany({})
     await prisma.userBalances.deleteMany({})
     await prisma.user.deleteMany({})
+    await prisma.$disconnect()
   })
 
   describe('edge cases', () => {
@@ -77,9 +83,9 @@ describe('Purchase items', () => {
       chai
         .request('http://localhost:3000')
         .post('/api/noAuthPurchase')
-        .send({ userId: '1', itemId: '1', quantity: 1 })
+        .send({ userId: internals.users[0].id, itemId: 'null', quantity: 1 })
         .end((err, res) => {
-
+          
           res.body.message.should.eq('no item found')
           res.should.have.status(400);
           done()
@@ -121,10 +127,28 @@ describe('Purchase items', () => {
       .request('http://localhost:3000')
       .post('/api/noAuthPurchase')
       .send({ userId: internals.users[0].id, itemId: internals.items[0].id, quantity: 1 })
-      .end((err, res) => {
-        res.body.message.should.eq('Purchase in accepted, we will notify you once the purchase is approved')
+      .end(async (err, res) => {
+        res.body.message.should.eq('Purchase was accepted, we will notify you once the purchase is approved')
         res.should.have.status(202);
         redis.del(`item:${internals.items[0].id}`)
+
+        await sleep(100)  // Wait fot the event to be send and processed by the worker
+
+        const purchases = await prisma.purchases.findMany({
+          where: {
+            userId: internals.users[0].id
+          }
+        })
+        const item = await prisma.flashSaleItems.findFirst({
+          where: {
+            id: internals.items[0].id
+          }
+        })
+        expect(purchases).to.have.lengthOf(1)
+        expect(purchases[0].userId).to.eq(internals.users[0].id)
+        expect(purchases[0].itemId).to.eq(internals.items[0].id)
+        expect(purchases[0].price).to.eq(item.price)
+        expect(purchases[0].quantity).to.eq(1)
         done();
       });
   });

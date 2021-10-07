@@ -14,7 +14,7 @@ module.exports = {
           return config.entry().then((entry) => ({
             ...entry,
             // adding custom entry points
-            worker: path.resolve(process.cwd(), 'lib/worker.ts'),
+            worker: path.resolve(process.cwd(), 'lib/worker/index.ts'),
             fixtures: path.resolve(process.cwd(), 'lib/fixtures/index.ts'),
           }));
         }

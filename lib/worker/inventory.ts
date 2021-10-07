@@ -1,5 +1,5 @@
 import { getAllActive } from '../models/flashSaleItems'
-import { redis } from './redis'
+import { redis } from '../utils/redis'
 
 class Inventory {
   

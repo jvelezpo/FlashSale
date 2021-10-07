@@ -42,7 +42,7 @@ class Purchase {
 
     await redis.set(`purchase:${userId}:${itemId}`, JSON.stringify({ time: new Date }))
 
-    return 'Purchase in accepted, we will notify you once the purchase is approved'
+    return 'Purchase was accepted, we will notify you once the purchase is approved'
   }
   
   async handlePurchaseEvent(event: Event) {
