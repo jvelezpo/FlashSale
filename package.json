@@ -1,0 +1,50 @@
+{
+  "name": "profiles",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "worker": "dotenv -c -- node .next/server/worker.js",
+    "dev:worker": "wait-on .next/server/worker.js && dotenv -c -- nodemon .next/server/worker.js -w src/server -w src/shared",
+    "all": "npm-run-all -p dev dev:worker",
+    "fixtures:up": "NODE_ENV=dev node .next/server/fixtures.js -u -c 100",
+    "fixtures:down": "NODE_ENV=dev node .next/server/fixtures.js"
+  },
+  "dependencies": {
+    "@chakra-ui/icons": "^1.0.15",
+    "@chakra-ui/react": "^1.6.6",
+    "@emotion/react": "^11.4.1",
+    "@emotion/styled": "^11.3.0",
+    "@next-auth/prisma-adapter": "^0.5.4",
+    "@prisma/client": "^2.30.0",
+    "@types/amqplib": "^0.8.2",
+    "@types/faker": "^5.5.8",
+    "@types/ioredis": "^4.27.6",
+    "amqplib": "^0.8.0",
+    "dotenv-cli": "^4.0.0",
+    "express-validator": "^6.12.2",
+    "faker": "^5.5.3",
+    "framer-motion": "^4.1.17",
+    "install": "^0.13.0",
+    "ioredis": "^4.27.10",
+    "next": "11.1.0",
+    "next-auth": "^3.29.0",
+    "npm": "^7.24.2",
+    "prisma": "^2.30.0",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "sass": "^1.38.2"
+  },
+  "devDependencies": {
+    "@types/react": "17.0.19",
+    "eslint": "7.32.0",
+    "eslint-config-next": "11.1.0",
+    "nodemon": "^2.0.13",
+    "npm-run-all": "^4.1.5",
+    "typescript": "4.4.2",
+    "wait-on": "^6.0.0"
+  }
+}
