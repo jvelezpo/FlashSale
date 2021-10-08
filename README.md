@@ -1,34 +1,45 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## Flash Sale Assignment
 
-## Getting Started
+[Link to Assignment](https://popshoplive.notion.site/Backend-Take-Home-Assignment-b9cae5dbd099422aac7550e0ddb578b5)
 
-First, run the development server:
+## Tech Stack
+* Next.js
+* Typescript
+* Prisma
+* Postgres
+* RabbitMQ
+* Redis
+* Auth0
 
-```bash
-npm run dev
-# or
-yarn dev
+## Prerequisites
+* Docker
+* Node.js
+## How to run
+"It is dangerous to go alone!" for this reason we picked a composer docker project that provides docker containers for postgres, rabbit and redis the repo is [here](https://github.com/jvelezpo/composer), run it is straightforward:
+Run `docker-compose ud`
+With this we will be ready to use postgres, rabbit and redis locally running on our local docker.
+
+
+## Purchase flow
+
+![Flow Diagram](https://raw.githubusercontent.com/jvelezpo/FlashSale/main/public/FlowDiagram.jpg)
+## Load test
 ```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+All virtual users finished
+Summary report @ 06:12:37(-0500) 2021-10-08
+  Scenarios launched:  3922
+  Scenarios completed: 3922
+  Requests completed:  3922
+  Mean response/sec: 35.44
+  Response time (msec):
+    min: 3
+    max: 568
+    median: 8
+    p95: 24
+    p99: 54.3
+  Scenario counts:
+    Buy products: 3922 (100%)
+  Codes:
+    202: 1296
+    400: 2626
+```
