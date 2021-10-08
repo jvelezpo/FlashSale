@@ -33,10 +33,10 @@ export default function WithSubNavigation() {
   ]
 
   if (session) {
-    NAV_ITEMS.push({
-      label: 'Spends',
-      href: '/spends',
-    })
+    // NAV_ITEMS.push({
+    //   label: 'Spends',
+    //   href: '/spends',
+    // })
   }
 
   const DesktopNav = () => {

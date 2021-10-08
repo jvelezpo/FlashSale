@@ -12,7 +12,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     <Provider session={pageProps.session}>
       <ChakraProvider>
         <Nav />
-        <Container minH="100vh">
+        <Container minH="100vh" maxW="container.lg">
           <Layout>
             <Component {...pageProps} />
           </Layout>

@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import Purchase from '../../lib/service/purchase'
-import initMiddleware from '../../lib/utils/init-middleware'
-import validateMiddleware from '../../lib/utils/validate-middleware'
+import initMiddleware from '../../lib/utils/initMiddleware'
+import validateMiddleware from '../../lib/utils/validateMiddleware'
 import { check, validationResult } from 'express-validator'
 
 type Data = {

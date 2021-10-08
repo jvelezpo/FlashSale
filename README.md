@@ -45,6 +45,8 @@ In order to run the tests the server and the workers should be running, this mea
 * Run in a diferent terminal the test suite `npm t`
 ## Tradeoff and decisions
 
+* Purchase endpoint is duplicated one is behind Auth and the other is open to anyone, why? Mainly because there was not enough time to dedicate in tests for the Auth endPoint, so all tests are done with the no Auth endPoint. **Note** both Auth and no Auth purchase endPoints have the same logic, they can only be differentiate on the Auth validation
+
 * Next.js because It provides UI and a backend outof the box, and the initial thinking was to add a simple UI to query items and place purchase orders on them, due to time constraints the UI was not implemented.
 
 * Prisma was picked as the ORM for 3 main reasons:
@@ -93,12 +95,12 @@ For the rest of the code, such as workers, utils, models, services and more are 
 │   └── purchase.ts
 ├── utils
 │   ├── encoding.ts
-│   ├── init-middleware.ts
+│   ├── initMiddleware.ts
 │   ├── prisma.ts
 │   ├── redis.ts
 │   ├── taskPublisher.ts
 │   ├── taskSubscriber.ts
-│   └── validate-middleware.ts
+│   └── validateMiddleware.ts
 └── worker
     ├── index.ts
     └── inventory.ts
@@ -153,10 +155,22 @@ On this summary report we can see some important insights:
 * `Scenarios launched` and `Scenarios completed` is the same amount, this means all request were processed
 * `400: 19647` status codes by the server, this is our own logic for cases such the item is no longer available, the user already bought the item...
 
-### How to run the load tests
+## How to run the load tests
 
 * First run `npm run all`, this will kick off the API and the workers and it will also compile the code used by fixtures and workers.
 
 * There is a fixtures feature the loads date into our postgres DB, to run it just type in a different terminal `npm run fixtures:up`, by default it will create 5000 users and 1 item with a random quantity for this item between 1-500, this is to mimic 5000 users trying to buy a limited amount of the same item.
 
 * Finally run `npm run test:load`, this will start artillery load test, by default artillery will print every 10 seconds to the terminal until it fnish. In the server/worker terminal there should be a log for every time the worker receives an event from rabbit.
+
+## Web App
+
+The web app is very simple it conatins 2 tab
+
+* First tab display all the available items.
+* Second tab shows all purchase history of the current user.
+
+**Note**: there is no pagination and the queries to the DB are directly from the views, there are no controllers for this just because there is no enough time.
+
+![available Items list](https://raw.githubusercontent.com/jvelezpo/FlashSale/main/public/UIItems.png)
+![Purchase history](https://raw.githubusercontent.com/jvelezpo/FlashSale/main/public/UIHistory.png)
