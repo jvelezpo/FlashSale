@@ -18,7 +18,12 @@ class Purchase {
 
   async purchaseItems(userId: string, itemId: string, quantity: number): Promise<string> {
 
-    const purchaseInProgress = await redis.get(`purchase:${userId}:${itemId}`)
+    const purchasedItem = await redis.get(`purchased:${itemId}:${userId}`)
+    if (purchasedItem) {
+      return 'You already bought this item, leave others buy as well and enjoy your purchase'
+    }
+
+    const purchaseInProgress = await redis.get(`purchase:${itemId}:${userId}`)
     if (purchaseInProgress) {
       return 'Purchase already in progress'
     }
@@ -33,14 +38,14 @@ class Purchase {
       throw new Error('no item found')
     }
 
-    const userUsdBalance = await getUserBalance(userId, 'USD')
+    const userUsdBalance = await getUserBalance(String(userId), 'USD')
     if (!userUsdBalance || userUsdBalance.balance < item.price) {
       throw new Error('Not enough balance')
     }
 
     (await taskPublisher).publish({ userId, itemId, quantity})
 
-    await redis.set(`purchase:${userId}:${itemId}`, JSON.stringify({ time: new Date }))
+    await redis.set(`purchase:${itemId}:${userId}`, JSON.stringify({ time: new Date }))
 
     return 'Purchase was accepted, we will notify you once the purchase is approved'
   }
@@ -48,6 +53,7 @@ class Purchase {
   async handlePurchaseEvent(event: Event) {
   
     const { quantity, userId, itemId } = event
+    console.log('Got Event:', event)
   
     const maxQuantity = process.env.MAX_ITEMS_ALLOWED_TO_PURCHASE || 1
     if (quantity > maxQuantity) {
@@ -62,7 +68,7 @@ class Purchase {
       return console.log('We ran out of inventory in this item, please check more products from our amazing store')
     }
   
-    const userUsdBalance = await getUserBalance(userId, internals.currency)
+    const userUsdBalance = await getUserBalance(String(userId), internals.currency)
     if (!userUsdBalance || userUsdBalance.balance < item.price) {
       return console.log('Not enough balance')
     }
@@ -84,16 +90,20 @@ class Purchase {
       // 3. Create a record of the purchase
       await createPurchase(userId, itemId, item.price, Number(quantity))
 
-      // 4. Remove the item if the quantity reached 0, making this item un available to future purchases
+      // 4. Clean up 
+      //    Remove the item if the quantity reached 0, making this item un available to future purchases
+      //    
       if (updatedItem.quantity === 0) {
-        await redis.del(`item:${updatedItem.id}`)    
+        await redis.del(`item:${updatedItem.id}`)
       }
+      
+      await redis.set(`purchased:${itemId}:${userId}`, JSON.stringify({ time: new Date }))
   
     } catch (err) {
       console.log('ERROR:', err)
     }
-    // Flag to allow the user to buy again in the future
-    await redis.del(`purchase:${userId}:${itemId}`)
+    
+    await redis.del(`purchase:${itemId}:${userId}`)
   }
 }
 

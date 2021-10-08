@@ -16,7 +16,7 @@ export async function getAllActive() {
 export async function getActiveItem(id: string) {
   return prisma.flashSaleItems.findFirst({
     where: {
-      id,
+      id: `${id}`,
       quantity: {
         gt: 0
       },
@@ -31,7 +31,7 @@ export async function updateFlashItem(id: string, params: any) {
   return prisma.flashSaleItems.update({
     data: params,
     where: {
-      id
+      id: `${id}`
     },
   })
 }

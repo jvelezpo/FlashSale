@@ -64,8 +64,23 @@ describe('Purchase items', () => {
 
   describe('edge cases', () => {
 
-    it('Purchase already in progress', (done) => {
-      redis.set(`purchase:${internals.users[0].id}:${internals.items[0].id}`, JSON.stringify({ time: new Date }))
+    it('should let the user know only one item can be bought per user', (done) => {
+      redis.set(`purchased:${internals.items[0].id}:${internals.users[0].id}`, JSON.stringify({ time: new Date }))
+      chai
+        .request('http://localhost:3000')
+        .post('/api/noAuthPurchase')
+        .send({ userId: internals.users[0].id, itemId: internals.items[0].id, quantity: 1 })
+        .end(async (err, res) => {
+
+          res.body.message.should.eq('You already bought this item, leave others buy as well and enjoy your purchase')
+          res.should.have.status(202);
+          await redis.del(`purchased:${internals.items[0].id}:${internals.users[0].id}`)
+          done()
+        })
+    })
+
+    it('should let the user know there is a purchase already in progress', (done) => {
+      redis.set(`purchase:${internals.items[0].id}:${internals.users[0].id}`, JSON.stringify({ time: new Date }))
       chai
         .request('http://localhost:3000')
         .post('/api/noAuthPurchase')
@@ -74,12 +89,12 @@ describe('Purchase items', () => {
 
           res.body.message.should.eq('Purchase already in progress')
           res.should.have.status(202);
-          await redis.del(`purchase:${internals.users[0].id}:${internals.items[0].id}`)
+          await redis.del(`purchase:${internals.items[0].id}:${internals.users[0].id}`)
           done()
         })
     })
 
-    it('Item not found', (done) => {
+    it('should respond with item not found', (done) => {
       chai
         .request('http://localhost:3000')
         .post('/api/noAuthPurchase')
@@ -92,7 +107,7 @@ describe('Purchase items', () => {
         })
     })
     
-    it('Not enough balance', (done) => {
+    it('should identify not enough balance before placing an order', (done) => {
       redis.set(`item:${internals.items[1].id}`, JSON.stringify(internals.items[1]))
       chai
         .request('http://localhost:3000')
@@ -107,7 +122,7 @@ describe('Purchase items', () => {
         })
     })
 
-    it('Max allowed quantity error', (done) => {
+    it('should check for max allowed quantity per item', (done) => {
       chai
         .request('http://localhost:3000')
         .post('/api/noAuthPurchase')
