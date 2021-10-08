@@ -2,6 +2,16 @@
   "name": "profiles",
   "version": "0.1.0",
   "private": true,
+  "author": {
+    "url": "https://github.com/jvelezpo",
+    "name": "@jvelezpo",
+    "email": "sebasvelez@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jvelezpo/FlashSale.git"
+  },
+  "description": "Platform to bring Africa to a modern economic banking system",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -12,7 +22,8 @@
     "fixtures:up": "NODE_ENV=dev node .next/server/fixtures.js -u -c 5000 -i 1",
     "fixtures:down": "NODE_ENV=dev node .next/server/fixtures.js",
     "mocha": "mocha --exit './test/**/*.{mjs,ts}'",
-    "e2e": "start-server-and-test dev http://localhost:3000 worker"
+    "e2e": "start-server-and-test dev http://localhost:3000 worker",
+    "test:load": "artillery run ./load/artillery.yaml"
   },
   "dependencies": {
     "@chakra-ui/icons": "^1.0.15",
