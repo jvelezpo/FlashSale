@@ -1,15 +1,15 @@
 config:
   target: "http://localhost:3000/api"
   phases:
-    - duration: 20
-      arrivalRate: 5
-      name: Warm up
     - duration: 30
       arrivalRate: 5
-      rampTo: 50
-      name: Ramp up load
+      name: Warm up
     - duration: 60
-      arrivalRate: 50
+      arrivalRate: 5
+      rampTo: 100
+      name: Ramp up load
+    - duration: 180
+      arrivalRate: 100
       name: Sustained load
   payload:
     path: "ManyUsersOneItem.csv"

@@ -35,7 +35,7 @@ describe('Items', () => {
       }
     })
 
-    await sleep(100)  // Wait fot the worker to refresh the available inventory in Redis
+    await sleep(200)  // Wait fot the worker to refresh the available inventory in Redis
 
     const redisItem = JSON.parse(await redis.get(`item:${itemId}`))
 
